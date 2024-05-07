@@ -6,8 +6,8 @@ import csv3
 from funktioner import *
 
 ##### MAIN #####
-k = 3
-num_std = 1.28 #1.64
+k = 13
+num_std = 2 #1.28 #1.64
 weekdays = [w for w in range(7)]
 
 
@@ -76,15 +76,19 @@ for wdn in weekdays:
 
 # Plot normalized price vectors and median weekday, by weekday
 weekdaynames = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
-fig, axes = plt.subplots(2, 7)
+fig, axes = plt.subplots(2, 7, sharex=True, sharey=True, figsize=(15, 5))
 for wdn in weekdays:
+    axes[0, wdn].set_ylim(0, 3000)
+    axes[0, wdn].set_xticks(range(0, 25,  4))
     for price_vct in price_vct_lst_of_weekday[wdn]:
         axes[0, wdn].plot(price_vct)
         axes[0, wdn].set_title(weekdaynames[wdn], fontsize=11)
-    axes[0, wdn].set_ylabel("Price (DKK/MWh)")
+    if wdn == 0: axes[0, wdn].set_ylabel("Price (DKK/MWh)")
     axes[1, wdn].plot(day_vct_by_wdn[wdn])
     axes[1, wdn].set_title(f'Median({weekdaynames[wdn]})', fontsize=10)
-    axes[1, wdn].set_ylabel("Price (DKK/MWh)")
+    if wdn == 0: axes[1, wdn].set_ylabel("Price (DKK/MWh)")
+    axes[1, wdn].set_ylim(0, 2000)
+    axes[1, wdn].set_xticks(range(0, 25,  4))
     plt.subplots_adjust(hspace=0.25)
 plt.show()
 
@@ -201,12 +205,13 @@ axes[0].fill_between(hours, y_lower, y_upper, alpha = 0.2, label="Konfidensbånd
 for date_vct in prognosis2:
     axes[0].plot(hours, date_vct[2], label=f"{date_vct[0]}")
 axes[0].plot(hours, nordpoolprices, label="Nordpool", marker='.', c='black')
-axes[0].legend(fontsize = 8, loc='upper left')
+axes[0].legend(fontsize = 6, loc='upper left')
 axes[0].grid()
 axes[1].set_title(f"Medianværdier (k={k}) for {next_day}(normalized)")
 axes[1].set_ylabel("Elspot pris i DKK")
 axes[1].set_xlabel("Timer")
 axes[1].plot(median_lst)
+axes[1].set_ylim(0, 3500)
 axes[1].set_xticks(x_ticks, x_labels)
 axes[1].grid()
 plt.subplots_adjust(hspace=0.5)
